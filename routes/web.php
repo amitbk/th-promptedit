@@ -4,8 +4,11 @@ use App\Http\Controllers\Admin\UsageReportController;
 use App\Http\Controllers\GenerationController;
 use App\Http\Controllers\PixelforgeWebhookController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::redirect('/', '/generations')->name('home');
+Route::get('/', fn () => auth()->check()
+    ? redirect()->route('generations.index')
+    : Inertia::render('Welcome'))->name('home');
 
 Route::post('webhooks/pixelforge', PixelforgeWebhookController::class)->name('webhooks.pixelforge');
 

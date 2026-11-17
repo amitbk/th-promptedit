@@ -44,7 +44,7 @@ const options = computed(() => [
                     'shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
                     option.value === active
                         ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                        : 'border-sidebar-border/70 bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground dark:border-sidebar-border',
+                        : 'border-border bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                 )
             "
         >

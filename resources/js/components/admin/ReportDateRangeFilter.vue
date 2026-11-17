@@ -101,7 +101,7 @@ function applyPreset(days: number): void {
 
 <template>
     <form
-        class="flex flex-col gap-4 rounded-2xl border border-sidebar-border/70 bg-card p-4 shadow-xs lg:flex-row lg:items-end dark:border-sidebar-border"
+        class="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 shadow-xs lg:flex-row lg:items-end"
         @submit.prevent="apply()"
     >
         <div class="grid flex-1 grid-cols-2 gap-3 sm:max-w-md">
@@ -149,7 +149,7 @@ function applyPreset(days: number): void {
                         'rounded-full border px-3 py-1.5 text-sm font-medium transition-colors',
                         activePreset === preset.days
                             ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-sidebar-border/70 text-muted-foreground hover:bg-accent hover:text-accent-foreground dark:border-sidebar-border',
+                            : 'border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                     )
                 "
                 :aria-pressed="activePreset === preset.days"

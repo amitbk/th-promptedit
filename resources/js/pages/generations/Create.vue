@@ -185,91 +185,99 @@ async function submit(): Promise<void> {
                 :errors="[submissionError]"
             />
 
-            <div class="space-y-2">
-                <div class="flex items-end justify-between gap-2">
-                    <Label for="prompt">
-                        Prompt
+            <div
+                class="space-y-6 rounded-2xl border border-border bg-card p-5 shadow-xs md:p-6"
+            >
+                <div class="space-y-2">
+                    <div class="flex items-end justify-between gap-2">
+                        <Label for="prompt">
+                            Prompt
+                            <span class="text-red-500" aria-hidden="true"
+                                >*</span
+                            >
+                        </Label>
+                        <span
+                            class="text-xs text-muted-foreground tabular-nums"
+                            :class="{
+                                'text-red-600':
+                                    promptLength > limits.prompt_length,
+                            }"
+                        >
+                            {{ promptLength.toLocaleString() }} /
+                            {{ limits.prompt_length.toLocaleString() }}
+                        </span>
+                    </div>
+                    <textarea
+                        id="prompt"
+                        v-model="form.prompt"
+                        v-focus
+                        name="prompt"
+                        rows="5"
+                        required
+                        :disabled="submitting"
+                        :aria-invalid="errors.prompt ? true : undefined"
+                        aria-describedby="prompt-hint"
+                        placeholder="A lighthouse on a cliff at dawn, oil painting, warm light and crashing waves"
+                        class="w-full resize-y rounded-2xl border border-input bg-transparent px-4 py-3 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30"
+                        @keydown.meta.enter.prevent="submit"
+                        @keydown.ctrl.enter.prevent="submit"
+                    />
+                    <p id="prompt-hint" class="text-xs text-muted-foreground">
+                        Be specific about the subject, style and lighting.
+                        Longer prompts cost slightly more.
+                    </p>
+                    <InputError :message="errors.prompt" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label as="span">
+                        Size
                         <span class="text-red-500" aria-hidden="true">*</span>
                     </Label>
-                    <span
-                        class="text-xs text-muted-foreground tabular-nums"
-                        :class="{
-                            'text-red-600': promptLength > limits.prompt_length,
-                        }"
-                    >
-                        {{ promptLength.toLocaleString() }} /
-                        {{ limits.prompt_length.toLocaleString() }}
-                    </span>
+                    <GenerationSizePicker
+                        v-model="form.size"
+                        :sizes="sizes"
+                        :invalid="!!errors.size"
+                    />
+                    <InputError :message="errors.size" />
                 </div>
-                <textarea
-                    id="prompt"
-                    v-model="form.prompt"
-                    v-focus
-                    name="prompt"
-                    rows="5"
-                    required
-                    :disabled="submitting"
-                    :aria-invalid="errors.prompt ? true : undefined"
-                    aria-describedby="prompt-hint"
-                    placeholder="A lighthouse on a cliff at dawn, oil painting, warm light and crashing waves"
-                    class="w-full resize-y rounded-2xl border border-input bg-transparent px-4 py-3 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30"
-                    @keydown.meta.enter.prevent="submit"
-                    @keydown.ctrl.enter.prevent="submit"
-                />
-                <p id="prompt-hint" class="text-xs text-muted-foreground">
-                    Be specific about the subject, style and lighting. Longer
-                    prompts cost slightly more.
-                </p>
-                <InputError :message="errors.prompt" />
-            </div>
 
-            <div class="space-y-2">
-                <Label as="span">
-                    Size <span class="text-red-500" aria-hidden="true">*</span>
-                </Label>
-                <GenerationSizePicker
-                    v-model="form.size"
-                    :sizes="sizes"
-                    :invalid="!!errors.size"
-                />
-                <InputError :message="errors.size" />
-            </div>
+                <div class="space-y-2">
+                    <Label as="span">
+                        Quality
+                        <span class="text-red-500" aria-hidden="true">*</span>
+                    </Label>
+                    <GenerationQualityPicker
+                        v-model="form.quality"
+                        :qualities="qualities"
+                        :invalid="!!errors.quality"
+                    />
+                    <InputError :message="errors.quality" />
+                </div>
 
-            <div class="space-y-2">
-                <Label as="span">
-                    Quality
-                    <span class="text-red-500" aria-hidden="true">*</span>
-                </Label>
-                <GenerationQualityPicker
-                    v-model="form.quality"
-                    :qualities="qualities"
-                    :invalid="!!errors.quality"
-                />
-                <InputError :message="errors.quality" />
-            </div>
-
-            <div class="space-y-2">
-                <Label as="span">
-                    Reference images
-                    <span class="font-normal text-muted-foreground">
-                        (optional)
-                    </span>
-                </Label>
-                <p class="text-xs text-muted-foreground">
-                    Links to images whose style you'd like to follow. Each one
-                    adds to the cost.
-                </p>
-                <ReferenceImageInputs
-                    v-model="form.reference_image_urls"
-                    :max="limits.reference_images"
-                    :errors="referenceErrors"
-                    :disabled="submitting"
-                />
-                <InputError :message="errors.reference_image_urls" />
+                <div class="space-y-2">
+                    <Label as="span">
+                        Reference images
+                        <span class="font-normal text-muted-foreground">
+                            (optional)
+                        </span>
+                    </Label>
+                    <p class="text-xs text-muted-foreground">
+                        Links to images whose style you'd like to follow. Each
+                        one adds to the cost.
+                    </p>
+                    <ReferenceImageInputs
+                        v-model="form.reference_image_urls"
+                        :max="limits.reference_images"
+                        :errors="referenceErrors"
+                        :disabled="submitting"
+                    />
+                    <InputError :message="errors.reference_image_urls" />
+                </div>
             </div>
         </div>
 
-        <aside class="lg:pt-16">
+        <aside class="lg:pt-[4.5rem]">
             <div class="space-y-4 lg:sticky lg:top-6">
                 <GenerationEstimateCard
                     :estimate="estimate"
@@ -282,7 +290,7 @@ async function submit(): Promise<void> {
                 <Button
                     type="submit"
                     size="lg"
-                    class="h-12 w-full rounded-2xl text-base shadow-md"
+                    class="h-12 w-full rounded-xl bg-brand-gradient text-base shadow-lg shadow-primary/30 hover:opacity-95"
                     :disabled="!canSubmit"
                     :aria-busy="submitting"
                 >

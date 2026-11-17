@@ -15,7 +15,7 @@ defineProps<{
 
 <template>
     <section
-        class="relative overflow-hidden rounded-2xl border border-sidebar-border/70 bg-card p-5 shadow-xs dark:border-sidebar-border"
+        class="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs"
     >
         <div class="flex items-start justify-between gap-3">
             <p class="text-sm font-medium text-muted-foreground">{{ label }}</p>

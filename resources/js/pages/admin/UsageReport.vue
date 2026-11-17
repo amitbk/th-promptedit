@@ -114,7 +114,7 @@ const profitNegative = computed(() =>
         <Deferred data="reconciliation">
             <template #fallback>
                 <section
-                    class="space-y-3 rounded-2xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border"
+                    class="space-y-3 rounded-2xl border border-border bg-card p-5"
                     aria-busy="true"
                 >
                     <p class="text-base font-semibold">
