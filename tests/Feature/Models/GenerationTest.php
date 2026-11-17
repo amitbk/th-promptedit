@@ -24,7 +24,7 @@ it('creates the generations table with the expected columns', function () {
         'id', 'uuid', 'user_id', 'provider_generation_id', 'prompt', 'size', 'quality',
         'reference_image_urls', 'status', 'estimated_provider_cost', 'estimated_customer_cost',
         'actual_provider_cost', 'actual_customer_cost', 'token_usage', 'provider_rates_snapshot',
-        'image_url', 'failure_reason', 'created_at', 'updated_at',
+        'image_url', 'image_path', 'failure_reason', 'completed_at', 'failed_at', 'created_at', 'updated_at',
     ]);
 });
 
@@ -34,7 +34,7 @@ it('creates a generation with a uuid and database defaults', function () {
     expect(Str::isUuid($generation->uuid))->toBeTrue()
         ->and($generation->status)->toBe(GenerationStatus::QUEUED)
         ->and($generation->estimated_provider_cost)->toBe('0.00000000')
-        ->and($generation->estimated_customer_cost)->toBe('0.00000000')
+        ->and($generation->estimated_customer_cost)->toBe('0.0000000000')
         ->and($generation->actual_provider_cost)->toBeNull()
         ->and($generation->actual_customer_cost)->toBeNull()
         ->and($generation->provider_generation_id)->toBeNull();
@@ -57,7 +57,7 @@ it('casts json, decimal and status attributes', function () {
         ->and($generation->status)->toBe(GenerationStatus::SUCCEEDED)
         ->and($generation->estimated_provider_cost)->toBe('0.37387500')
         ->and($generation->actual_provider_cost)->toBe('0.30551000')
-        ->and($generation->actual_customer_cost)->toBe('0.38188750')
+        ->and($generation->actual_customer_cost)->toBe('0.3818875000')
         ->and($generation->created_at)->toBeInstanceOf(DateTimeInterface::class);
 });
 

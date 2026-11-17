@@ -11,11 +11,19 @@ class PixelforgePricingService
 {
     private const PRICING_PATH = '/v1/pricing';
 
-    private const MONEY_SCALE = 9;
+    /** Decimal places of a provider cost, matching Pixelforge's `cost_usd`. */
+    private const PROVIDER_COST_SCALE = 9;
+
+    /**
+     * Decimal places of a customer cost (the `*_customer_cost` columns). A 25% markup adds two places to a
+     * provider cost, so costs of up to 8 decimals (all that Pixelforge's 2-decimal rates can produce) stay exact.
+     */
+    private const CUSTOMER_COST_SCALE = 10;
 
     private const TOKENS_PER_RATE_UNIT = 1_000_000;
 
-    private const RATE_KEYS = ['input_text_tokens', 'input_image_tokens', 'output_tokens', 'reasoning_tokens'];
+    /** Token types Pixelforge prices, shared by the pricing rates and a generation's usage. */
+    public const RATE_KEYS = ['input_text_tokens', 'input_image_tokens', 'output_tokens', 'reasoning_tokens'];
 
     public function __construct(private readonly PixelforgeClient $client) {}
 
@@ -111,11 +119,11 @@ class PixelforgePricingService
             );
         }
 
-        return (string) $total->toScale(self::MONEY_SCALE, RoundingMode::HalfUp);
+        return (string) $total->toScale(self::PROVIDER_COST_SCALE, RoundingMode::HalfUp);
     }
 
     /**
-     * Customer price for a provider cost: cost plus the configured markup, rounded half-up to 9 decimals.
+     * Customer price for a provider cost: cost plus the configured markup, computed with decimals and rounded half-up to 10 places only if needed.
      */
     public function applyMarkup(string $providerCost): string
     {
@@ -123,7 +131,7 @@ class PixelforgePricingService
 
         return (string) BigDecimal::of($providerCost)
             ->multipliedBy($multiplier)
-            ->toScale(self::MONEY_SCALE, RoundingMode::HalfUp);
+            ->toScale(self::CUSTOMER_COST_SCALE, RoundingMode::HalfUp);
     }
 
     /**

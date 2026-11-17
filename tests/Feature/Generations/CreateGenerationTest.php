@@ -77,7 +77,7 @@ it('creates a generation and submits it to Pixelforge with an idempotency key', 
         'status' => 'queued',
         // Worked example from the Pixelforge docs: 400 chars, 2 reference images, high 1536x1024.
         'estimated_provider_cost' => '0.37387500',
-        'estimated_customer_cost' => '0.46734375',
+        'estimated_customer_cost' => '0.4673437500',
         'provider_generation_id' => 'gen_01JC2Z8Q4N6V0M3H7X5T9R2B1K',
     ]]);
 

@@ -26,7 +26,10 @@ use Illuminate\Support\Carbon;
  * @property array<string, int>|null $token_usage
  * @property array<string, string>|null $provider_rates_snapshot
  * @property string|null $image_url
+ * @property string|null $image_path
  * @property string|null $failure_reason
+ * @property Carbon|null $completed_at
+ * @property Carbon|null $failed_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
@@ -46,7 +49,10 @@ use Illuminate\Support\Carbon;
     'token_usage',
     'provider_rates_snapshot',
     'image_url',
+    'image_path',
     'failure_reason',
+    'completed_at',
+    'failed_at',
 ])]
 class Generation extends Model
 {
@@ -86,9 +92,11 @@ class Generation extends Model
             'provider_rates_snapshot' => 'array',
             'status' => GenerationStatus::class,
             'estimated_provider_cost' => 'decimal:8',
-            'estimated_customer_cost' => 'decimal:8',
+            'estimated_customer_cost' => 'decimal:10',
             'actual_provider_cost' => 'decimal:8',
-            'actual_customer_cost' => 'decimal:8',
+            'actual_customer_cost' => 'decimal:10',
+            'completed_at' => 'datetime',
+            'failed_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];

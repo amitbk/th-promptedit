@@ -9,7 +9,7 @@ namespace App\Services\Pixelforge;
  * generation completes, so the estimate is a minimum/maximum range. Actual billing uses the
  * completed generation's token usage and the rate snapshot stored on that generation.
  *
- * Money values are exact decimal strings in USD with 9 decimal places.
+ * Money values are decimal strings in USD: 9 decimal places for provider costs, 10 for customer costs.
  */
 final readonly class PixelforgeCostEstimate
 {

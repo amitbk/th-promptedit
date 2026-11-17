@@ -10,6 +10,7 @@ use App\Services\Pixelforge\PixelforgeClient;
 use App\Services\Pixelforge\PixelforgeCostEstimate;
 use App\Services\Pixelforge\PixelforgeException;
 use App\Services\Pixelforge\PixelforgePricingService;
+use App\Services\Pixelforge\PixelforgeWebhookService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
@@ -23,6 +24,7 @@ class GenerationService
     public function __construct(
         private readonly PixelforgePricingService $pricing,
         private readonly PixelforgeClient $client,
+        private readonly PixelforgeWebhookService $webhooks,
     ) {}
 
     /**
@@ -106,7 +108,22 @@ class GenerationService
             'provider_rates_snapshot' => is_array($response['rates'] ?? null) ? $response['rates'] : $generation->provider_rates_snapshot,
         ]);
 
-        return $generation;
+        $this->applyWaitingWebhookEvents($generation);
+
+        return $generation->refresh();
+    }
+
+    /**
+     * Webhook events that arrived before the provider id was stored are kept pending; apply them now.
+     * A failure here must not fail the submission: the events stay pending and Pixelforge redelivers them.
+     */
+    private function applyWaitingWebhookEvents(Generation $generation): void
+    {
+        try {
+            $this->webhooks->retryPending($generation);
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 
     /**

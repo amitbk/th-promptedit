@@ -42,7 +42,7 @@ it('matches the documented maximum cost worked example', function () {
         'output_tokens' => 6450,
     ])
         ->and($estimate->providerCostMax)->toBe('0.373875000')
-        ->and($estimate->customerCostMax)->toBe('0.467343750');
+        ->and($estimate->customerCostMax)->toBe('0.4673437500');
 });
 
 it('estimates the minimum with fewer text tokens and minimum reasoning', function () {
@@ -54,7 +54,7 @@ it('estimates the minimum with fewer text tokens and minimum reasoning', functio
     expect($estimate->tokensMin['input_text_tokens'])->toBe(85)
         ->and($estimate->tokensMin['reasoning_tokens'])->toBe(1000)
         ->and($estimate->providerCostMin)->toBe('0.286225000')
-        ->and($estimate->customerCostMin)->toBe('0.357781250');
+        ->and($estimate->customerCostMin)->toBe('0.3577812500');
 });
 
 it('counts prompt characters, not bytes, and rounds up to whole tokens', function () {
@@ -89,13 +89,16 @@ it('computes provider cost exactly from usage and a rate snapshot', function () 
     expect($cost)->toBe('0.305510000');
 });
 
-it('applies the 25 percent markup with half-up rounding at nine decimals', function () {
+it('applies the 25 percent markup with decimal arithmetic at ten decimals', function () {
     $service = app(PixelforgePricingService::class);
 
-    expect($service->applyMarkup('0.305510000'))->toBe('0.381887500')
-        ->and($service->applyMarkup('0.000000001'))->toBe('0.000000001')
-        ->and($service->applyMarkup('0.000000002'))->toBe('0.000000003')
-        ->and($service->applyMarkup('0'))->toBe('0.000000000');
+    expect($service->applyMarkup('0.305510000'))->toBe('0.3818875000')
+        // The markup adds two decimal places, which are kept rather than rounded to the provider's scale.
+        ->and($service->applyMarkup('0.12345678'))->toBe('0.1543209750')
+        ->and($service->applyMarkup('0.00000001'))->toBe('0.0000000125')
+        // Only a provider cost finer than 8 decimals can need rounding (half-up).
+        ->and($service->applyMarkup('0.000000001'))->toBe('0.0000000013')
+        ->and($service->applyMarkup('0'))->toBe('0.0000000000');
 });
 
 it('rejects an unpriced size or quality', function (string $size, string $quality) {
