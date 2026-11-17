@@ -11,6 +11,7 @@ use App\Services\Pixelforge\PixelforgeCostEstimate;
 use App\Services\Pixelforge\PixelforgeException;
 use App\Services\Pixelforge\PixelforgePricingService;
 use App\Services\Pixelforge\PixelforgeWebhookService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
@@ -56,6 +57,23 @@ class GenerationService
         ]);
 
         return $this->submit($generation, $urls);
+    }
+
+    /**
+     * The user's generations, newest first, optionally limited to one status.
+     *
+     * @return LengthAwarePaginator<int, Generation>
+     */
+    public function paginateForUser(User $user, ?GenerationStatus $status, int $perPage = 12): LengthAwarePaginator
+    {
+        return Generation::query()
+            ->whereBelongsTo($user)
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->latest()
+            // Keeps the order stable between pages when several share a timestamp.
+            ->latest('id')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**
