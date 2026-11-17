@@ -12,6 +12,7 @@ use App\Services\Pixelforge\PixelforgeException;
 use App\Services\Pixelforge\PixelforgePricingService;
 use App\Services\Pixelforge\PixelforgeWebhookService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
@@ -36,13 +37,53 @@ class GenerationService
      *
      * @param  array{prompt: string, size: string, quality: string, reference_image_urls?: array<int, string>|null}  $data
      *
+     * Only one submission per user runs at a time, so a double click or a resent request cannot create
+     * a second generation while the first is still being submitted.
+     *
      * @throws ValidationException When Pixelforge rejects the input; the generation is marked failed.
-     * @throws HttpException When Pixelforge definitively refuses the request; the generation is marked failed.
+     * @throws HttpException When Pixelforge definitively refuses the request (the generation is marked failed),
+     *                       or 429 when the user already has a submission in progress.
      */
     public function create(User $user, array $data): Generation
     {
+        // Covers the pricing call and the create call, each bounded by the client timeout.
+        $lock = Cache::lock("generations:submitting:{$user->id}", (int) config('pixelforge.timeout', 30) * 2 + 10);
+
+        if (! $lock->get()) {
+            throw new HttpException(429, __('Your previous image is still being submitted. Please wait a moment.'));
+        }
+
+        try {
+            return $this->record($user, $data);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Estimate what a generation will cost before it is submitted.
+     *
+     * @throws ValidationException When the size and quality combination is not priced.
+     * @throws HttpException 503 when pricing cannot be fetched.
+     */
+    public function estimate(string $prompt, string $size, string $quality, int $referenceImageCount): PixelforgeCostEstimate
+    {
+        try {
+            return $this->pricing->estimate($prompt, $size, $quality, $referenceImageCount);
+        } catch (InvalidArgumentException) {
+            throw ValidationException::withMessages(['size' => __('This size and quality combination is not available.')]);
+        } catch (PixelforgeException|InvalidPixelforgePricingException) {
+            throw new HttpException(503, __('Pricing is temporarily unavailable. Please try again shortly.'));
+        }
+    }
+
+    /**
+     * @param  array{prompt: string, size: string, quality: string, reference_image_urls?: array<int, string>|null}  $data
+     */
+    private function record(User $user, array $data): Generation
+    {
         $urls = $data['reference_image_urls'] ?? [];
-        $estimate = $this->estimate($data, count($urls));
+        $estimate = $this->estimate($data['prompt'], $data['size'], $data['quality'], count($urls));
 
         $generation = Generation::create([
             'user_id' => $user->id,
@@ -74,20 +115,6 @@ class GenerationService
             ->latest('id')
             ->paginate($perPage)
             ->withQueryString();
-    }
-
-    /**
-     * @param  array{prompt: string, size: string, quality: string}  $data
-     */
-    private function estimate(array $data, int $referenceImageCount): PixelforgeCostEstimate
-    {
-        try {
-            return $this->pricing->estimate($data['prompt'], $data['size'], $data['quality'], $referenceImageCount);
-        } catch (InvalidArgumentException) {
-            throw ValidationException::withMessages(['size' => __('This size and quality combination is not available.')]);
-        } catch (PixelforgeException|InvalidPixelforgePricingException) {
-            throw new HttpException(503, __('Pricing is temporarily unavailable. Please try again shortly.'));
-        }
     }
 
     /**

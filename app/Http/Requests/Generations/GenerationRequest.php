@@ -11,17 +11,17 @@ class GenerationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * Limits (4,000 prompt characters, 4 reference images) come from the Pixelforge API reference.
+     * Limits come from the Pixelforge API reference, via config/pixelforge.php.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'prompt' => ['required', 'string', 'max:4000'],
+            'prompt' => ['required', 'string', 'max:'.config('pixelforge.max_prompt_length')],
             'size' => ['required', 'string', Rule::in(config('pixelforge.sizes'))],
             'quality' => ['required', 'string', Rule::in(config('pixelforge.qualities'))],
-            'reference_image_urls' => ['nullable', 'array', 'max:4'],
+            'reference_image_urls' => ['nullable', 'array', 'max:'.config('pixelforge.max_reference_images')],
             'reference_image_urls.*' => ['string', 'url:http,https'],
         ];
     }

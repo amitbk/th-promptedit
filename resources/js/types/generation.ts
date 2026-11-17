@@ -18,6 +18,22 @@ export type GenerationHistoryItem = {
     created_at: string;
 };
 
+/** Customer cost range of a generation before it runs, markup included. Exact decimal strings in USD. */
+export type GenerationEstimate = {
+    customer_cost_min: string;
+    /** The most it can cost; recorded as the generation's estimate. */
+    customer_cost_max: string;
+};
+
+/** Response of POST /generations. */
+export type CreatedGeneration = {
+    uuid: string;
+    status: GenerationStatus;
+    estimated_provider_cost: string;
+    estimated_customer_cost: string;
+    provider_generation_id: string | null;
+};
+
 export type PaginationLink = {
     url: string | null;
     label: string;

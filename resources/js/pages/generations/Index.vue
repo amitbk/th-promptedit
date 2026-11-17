@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, usePoll } from '@inertiajs/vue3';
-import { Images } from '@lucide/vue';
+import { Images, Wand2 } from '@lucide/vue';
 import { computed, watch } from 'vue';
 import GenerationCard from '@/components/generations/GenerationCard.vue';
 import GenerationStatusFilter from '@/components/generations/GenerationStatusFilter.vue';
 import Heading from '@/components/Heading.vue';
 import Pagination from '@/components/Pagination.vue';
 import { Button } from '@/components/ui/button';
-import { index } from '@/routes/generations';
+import { create, index } from '@/routes/generations';
 import type {
     GenerationHistoryItem,
     GenerationStatus,
@@ -57,10 +57,16 @@ watch(hasActiveGenerations, (active) => (active ? start() : stop()), {
 
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <div class="flex flex-col gap-4">
-            <Heading
-                title="Generation history"
-                description="Every image you've created, with what it cost."
-            />
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <Heading
+                    title="Generation history"
+                    description="Every image you've created, with what it cost."
+                />
+                <Button :as="Link" :href="create()" class="rounded-full">
+                    <Wand2 />
+                    New image
+                </Button>
+            </div>
             <GenerationStatusFilter
                 :statuses="statuses"
                 :active="filters.status"
@@ -99,6 +105,10 @@ watch(hasActiveGenerations, (active) => (active ? start() : stop()), {
                     Images you create will show up here with their status and
                     cost.
                 </p>
+                <Button :as="Link" :href="create()" size="sm">
+                    <Wand2 />
+                    Generate your first image
+                </Button>
             </template>
         </div>
 

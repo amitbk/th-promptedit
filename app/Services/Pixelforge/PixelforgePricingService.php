@@ -5,6 +5,7 @@ namespace App\Services\Pixelforge;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 
 class PixelforgePricingService
@@ -28,7 +29,7 @@ class PixelforgePricingService
     public function __construct(private readonly PixelforgeClient $client) {}
 
     /**
-     * Fetch the live pricing and validate it against the documented schema.
+     * Fetch Pixelforge's current pricing, validated against the documented schema.
      *
      * @return array<string, mixed>
      *
@@ -37,11 +38,15 @@ class PixelforgePricingService
      */
     public function getPricing(): array
     {
-        $pricing = $this->client->get(self::PRICING_PATH);
+        // Briefly cached so live estimates do not use up Pixelforge's per-minute request limit.
+        // Only validated pricing is cached; errors are thrown and nothing is stored.
+        return Cache::remember('pixelforge.pricing', (int) config('pixelforge.pricing_cache_seconds', 60), function (): array {
+            $pricing = $this->client->get(self::PRICING_PATH);
 
-        $this->validate($pricing);
+            $this->validate($pricing);
 
-        return $pricing;
+            return $pricing;
+        });
     }
 
     /**

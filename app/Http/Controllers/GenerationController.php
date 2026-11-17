@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\GenerationStatus;
+use App\Http\Requests\Generations\GenerationEstimateRequest;
 use App\Http\Requests\Generations\GenerationRequest;
+use App\Http\Resources\GenerationEstimateResource;
 use App\Http\Resources\GenerationHistoryResource;
 use App\Http\Resources\GenerationResource;
 use App\Models\Generation;
@@ -33,6 +35,35 @@ class GenerationController extends Controller
             'filters' => ['status' => $status],
             'statuses' => array_column(GenerationStatus::cases(), 'value'),
         ]);
+    }
+
+    /**
+     * Show the page for generating an image.
+     */
+    public function create(): Response
+    {
+        return Inertia::render('generations/Create', [
+            'sizes' => config('pixelforge.sizes'),
+            'qualities' => config('pixelforge.qualities'),
+            'limits' => [
+                'prompt_length' => config('pixelforge.max_prompt_length'),
+                'reference_images' => config('pixelforge.max_reference_images'),
+            ],
+            'markupPercent' => config('pixelforge.markup_percent'),
+        ]);
+    }
+
+    /**
+     * Estimate the customer cost of a generation before it is submitted.
+     */
+    public function estimate(GenerationEstimateRequest $request, GenerationService $generations): GenerationEstimateResource
+    {
+        return new GenerationEstimateResource($generations->estimate(
+            (string) $request->validated('prompt'),
+            $request->validated('size'),
+            $request->validated('quality'),
+            (int) $request->validated('reference_image_count'),
+        ));
     }
 
     /**
