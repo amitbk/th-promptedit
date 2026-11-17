@@ -25,4 +25,17 @@ class GenerationRequest extends FormRequest
             'reference_image_urls.*' => ['string', 'url:http,https'],
         ];
     }
+
+    /**
+     * Readable names for error messages, instead of "reference_image_urls.0".
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'reference_image_urls' => 'reference images',
+            'reference_image_urls.*' => 'reference image URL',
+        ];
+    }
 }

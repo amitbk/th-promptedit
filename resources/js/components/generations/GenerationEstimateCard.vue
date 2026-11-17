@@ -28,46 +28,52 @@ defineEmits<{
             aria-hidden="true"
         />
 
-        <p class="text-sm font-medium text-muted-foreground">Estimated cost</p>
+        <!-- Right padding keeps the text clear of the decorative icon. -->
+        <div class="relative pr-14">
+            <p class="text-sm font-medium text-muted-foreground">
+                Estimated cost
+            </p>
 
-        <div v-if="loading && !estimate" class="mt-2 space-y-2">
-            <Skeleton class="h-9 w-40 rounded-lg" />
-            <Skeleton class="h-4 w-56" />
-        </div>
+            <div v-if="loading && !estimate" class="mt-2 space-y-2">
+                <Skeleton class="h-9 w-40 rounded-lg" />
+                <Skeleton class="h-4 w-56" />
+            </div>
 
-        <div v-else-if="failed" class="mt-2 space-y-2">
-            <p class="text-sm">We couldn't load pricing right now.</p>
-            <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                @click="$emit('retry')"
+            <div v-else-if="failed" class="mt-2 space-y-2">
+                <p class="text-sm">We couldn't load pricing right now.</p>
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    @click="$emit('retry')"
+                >
+                    <RefreshCw />
+                    Try again
+                </Button>
+            </div>
+
+            <div
+                v-else-if="estimate"
+                class="mt-1 transition-opacity"
+                :class="{ 'opacity-50': loading }"
             >
-                <RefreshCw />
-                Try again
-            </Button>
-        </div>
+                <p class="text-3xl font-semibold tracking-tight tabular-nums">
+                    <span class="text-base font-normal text-muted-foreground">
+                        up to
+                    </span>
+                    {{ formatUsd(estimate.customer_cost_max) }}
+                </p>
+                <p class="mt-1 text-sm text-muted-foreground tabular-nums">
+                    Usually between
+                    {{ formatUsd(estimate.customer_cost_min) }} and
+                    {{ formatUsd(estimate.customer_cost_max) }}
+                </p>
+            </div>
 
-        <div
-            v-else-if="estimate"
-            class="mt-1 transition-opacity"
-            :class="{ 'opacity-50': loading }"
-        >
-            <p class="text-3xl font-semibold tracking-tight tabular-nums">
-                <span class="text-base font-normal text-muted-foreground">
-                    up to
-                </span>
-                {{ formatUsd(estimate.customer_cost_max) }}
-            </p>
-            <p class="mt-1 text-sm text-muted-foreground tabular-nums">
-                Usually between {{ formatUsd(estimate.customer_cost_min) }} and
-                {{ formatUsd(estimate.customer_cost_max) }}
+            <p v-else class="mt-2 text-sm text-muted-foreground">
+                Check your prompt and options to see the cost.
             </p>
         </div>
-
-        <p v-else class="mt-2 text-sm text-muted-foreground">
-            Check your prompt and options to see the cost.
-        </p>
 
         <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
             Includes a {{ markupPercent }}% service fee. This is an estimate:

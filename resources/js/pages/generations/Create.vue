@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router, useHttp } from '@inertiajs/vue3';
 import { LoaderCircle, Wand2 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import AlertError from '@/components/AlertError.vue';
 import GenerationEstimateCard from '@/components/generations/GenerationEstimateCard.vue';
@@ -69,6 +69,32 @@ const referenceErrors = computed(() =>
             errors.value[`reference_image_urls.${i}`],
         ]),
     ),
+);
+
+// A field's error disappears as soon as the user edits it, rather than lingering until the next submit.
+watch(
+    () => form.prompt,
+    () => form.clearErrors('prompt'),
+);
+watch(
+    () => form.size,
+    () => form.clearErrors('size'),
+);
+watch(
+    () => form.quality,
+    () => form.clearErrors('quality'),
+);
+watch(
+    () => [...form.reference_image_urls],
+    () => {
+        const keys = Object.keys(form.errors).filter((key) =>
+            key.startsWith('reference_image_urls'),
+        );
+
+        if (keys.length > 0) {
+            form.clearErrors(...(keys as Parameters<typeof form.clearErrors>));
+        }
+    },
 );
 
 // Set synchronously on the first click, before any await, so repeated clicks or Ctrl+Enter

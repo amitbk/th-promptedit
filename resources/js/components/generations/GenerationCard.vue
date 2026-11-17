@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CircleAlert } from '@lucide/vue';
+import { useMounted } from '@vueuse/core';
 import { computed } from 'vue';
 import GenerationImage from '@/components/generations/GenerationImage.vue';
 import GenerationStatusBadge from '@/components/generations/GenerationStatusBadge.vue';
@@ -10,11 +11,24 @@ const props = defineProps<{
     generation: GenerationHistoryItem;
 }>();
 
+// The page is server-rendered, where the user's locale and time zone are unknown. Render a fixed
+// UTC date first so the server and browser output match, then switch to the user's local time.
+const isMounted = useMounted();
+
 const createdAt = computed(() =>
-    new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    }).format(new Date(props.generation.created_at)),
+    new Intl.DateTimeFormat(
+        isMounted.value ? undefined : 'en-GB',
+        isMounted.value
+            ? { dateStyle: 'medium', timeStyle: 'short' }
+            : { dateStyle: 'medium', timeZone: 'UTC' },
+    ).format(new Date(props.generation.created_at)),
+);
+
+const qualityLabel = computed(
+    () =>
+        props.generation.quality.charAt(0).toUpperCase() +
+        props.generation.quality.slice(1) +
+        ' quality',
 );
 
 const charged = computed(() => {
@@ -56,8 +70,8 @@ const charged = computed(() => {
                 <span class="rounded-full bg-muted px-2 py-0.5">
                     {{ generation.size.replace('x', ' × ') }}
                 </span>
-                <span class="rounded-full bg-muted px-2 py-0.5 capitalize">
-                    {{ generation.quality }} quality
+                <span class="rounded-full bg-muted px-2 py-0.5">
+                    {{ qualityLabel }}
                 </span>
             </div>
 

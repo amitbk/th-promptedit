@@ -177,6 +177,9 @@ it('serves a stored image to its owner', function () {
     expect($response->streamedContent())->toBe('png-bytes')
         ->and($response->headers->get('Content-Disposition'))->toStartWith('inline')
         ->and($response->headers->get('Cache-Control'))->toContain('private')
+        // Must be revalidated, so another user on the same browser never gets a cached copy.
+        ->and($response->headers->get('Cache-Control'))->toContain('no-cache')
+        ->and($response->headers->get('Cache-Control'))->not->toContain('max-age=86400')
         ->and($response->headers->get('Content-Disposition'))->toContain("{$generation->uuid}.png")
         ->and($response->headers->get('Content-Disposition'))->not->toContain('generations/');
 });

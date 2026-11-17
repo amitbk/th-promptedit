@@ -90,8 +90,9 @@ class GenerationController extends Controller
         abort_if($generation->image_path === null || ! Storage::exists($generation->image_path), 404);
 
         return Storage::response($generation->image_path, "{$generation->uuid}.".pathinfo($generation->image_path, PATHINFO_EXTENSION), [
-            // Private to the signed-in user; the stored file never changes once written.
-            'Cache-Control' => 'private, max-age=86400',
+            // Never reused without asking the server: a cached copy would otherwise be shown to
+            // whoever signs in next on the same browser, without the ownership check.
+            'Cache-Control' => 'private, no-cache',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }
