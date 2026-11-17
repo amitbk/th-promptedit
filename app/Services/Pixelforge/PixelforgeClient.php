@@ -17,18 +17,19 @@ class PixelforgeClient
      */
     public function get(string $path, array $query = []): array
     {
-        return $this->send(fn (PendingRequest $request) => $request->get($path, $query));
+        return $this->send(fn(PendingRequest $request) => $request->get($path, $query));
     }
 
     /**
      * @param  array<string, mixed>  $data
+     * @param  array<string, string>  $headers  Extra headers, e.g. Idempotency-Key.
      * @return array<string, mixed>
      *
      * @throws PixelforgeException
      */
-    public function post(string $path, array $data = []): array
+    public function post(string $path, array $data = [], array $headers = []): array
     {
-        return $this->send(fn (PendingRequest $request) => $request->asJson()->post($path, $data));
+        return $this->send(fn(PendingRequest $request) => $request->withHeaders($headers)->asJson()->post($path, $data));
     }
 
     /**
