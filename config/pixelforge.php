@@ -5,4 +5,6 @@ return [
     'api_key' => env('PIXELFORGE_API_KEY'),
     'webhook_secret' => env('PIXELFORGE_WEBHOOK_SECRET'),
     'timeout' => (int) env('PIXELFORGE_TIMEOUT', 30),
+    // Percentage added on top of Pixelforge's cost when charging users.
+    'markup_percent' => 25,
 ];
