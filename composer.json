@@ -1,12 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "promptedit/promptedit",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "description": "promptedit: AI image generation platform.",
+    "keywords": [],
     "license": "MIT",
     "require": {
         "php": "^8.3",
