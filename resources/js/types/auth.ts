@@ -12,6 +12,10 @@ export type User = {
 
 export type Auth = {
     user: User;
+    /** Abilities of the signed-in user, decided on the server. */
+    can: {
+        viewAdminReports: boolean;
+    };
 };
 
 export type Passkey = {

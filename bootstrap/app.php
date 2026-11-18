@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        // Pixelforge cannot send a CSRF token; webhooks are authenticated by their HMAC signature.
+        $middleware->validateCsrfTokens(except: ['webhooks/pixelforge']);
 
         $middleware->web(append: [
             HandleAppearance::class,
@@ -25,6 +27,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+            fn (Request $request) => $request->is('api/*', 'webhooks/*') || $request->expectsJson(),
         );
     })->create();
