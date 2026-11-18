@@ -59,9 +59,7 @@ function shortId(id: string | null): string {
 </script>
 
 <template>
-    <section
-        class="rounded-2xl border border-sidebar-border/70 bg-card shadow-xs dark:border-sidebar-border"
-    >
+    <section class="rounded-2xl border border-border bg-card shadow-xs">
         <div class="space-y-4 p-5">
             <div class="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -198,7 +196,7 @@ function shortId(id: string | null): string {
         <div v-if="reconciliation.days.length" class="overflow-x-auto">
             <table class="w-full min-w-[36rem] text-sm">
                 <thead
-                    class="border-y border-sidebar-border/70 bg-muted/40 text-left text-xs text-muted-foreground dark:border-sidebar-border"
+                    class="border-y border-border bg-muted/40 text-left text-xs text-muted-foreground"
                 >
                     <tr>
                         <th scope="col" class="px-5 py-2.5 font-medium">
@@ -230,9 +228,7 @@ function shortId(id: string | null): string {
                         </th>
                     </tr>
                 </thead>
-                <tbody
-                    class="divide-y divide-sidebar-border/70 dark:divide-sidebar-border"
-                >
+                <tbody class="divide-y divide-border">
                     <tr
                         v-for="day in visibleDays"
                         :key="day.date"
@@ -297,7 +293,7 @@ function shortId(id: string | null): string {
 
         <div
             v-if="reconciliation.discrepancies.length"
-            class="border-t border-sidebar-border/70 p-5 dark:border-sidebar-border"
+            class="border-t border-border p-5"
         >
             <h3 class="text-sm font-semibold">Generations to review</h3>
             <ul class="mt-3 space-y-3">

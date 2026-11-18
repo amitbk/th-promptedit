@@ -86,12 +86,12 @@ watch(hasActiveGenerations, (active) => (active ? start() : stop()), {
 
         <div
             v-else
-            class="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-sidebar-border/70 p-10 text-center dark:border-sidebar-border"
+            class="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center"
         >
             <div
-                class="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5"
+                class="flex size-14 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-lg shadow-primary/30"
             >
-                <Images class="size-7 text-primary" aria-hidden="true" />
+                <Images class="size-7" aria-hidden="true" />
             </div>
             <template v-if="filters.status">
                 <p class="font-medium">No {{ filters.status }} generations</p>

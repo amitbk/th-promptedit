@@ -11,9 +11,7 @@ const isNegative = (amount: string) => amount.startsWith('-');
 </script>
 
 <template>
-    <section
-        class="rounded-2xl border border-sidebar-border/70 bg-card shadow-xs dark:border-sidebar-border"
-    >
+    <section class="rounded-2xl border border-border bg-card shadow-xs">
         <div class="flex items-center justify-between gap-3 p-5 pb-3">
             <div>
                 <h2 class="text-base font-semibold">By user</h2>
@@ -27,7 +25,7 @@ const isNegative = (amount: string) => amount.startsWith('-');
 
         <p
             v-if="users.length === 0"
-            class="m-5 mt-2 rounded-xl border border-dashed border-sidebar-border/70 p-8 text-center text-sm text-muted-foreground dark:border-sidebar-border"
+            class="m-5 mt-2 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground"
         >
             No finished generations in this range.
         </p>
@@ -35,7 +33,7 @@ const isNegative = (amount: string) => amount.startsWith('-');
         <div v-else class="overflow-x-auto">
             <table class="w-full min-w-[40rem] text-sm">
                 <thead
-                    class="border-y border-sidebar-border/70 bg-muted/40 text-left text-xs text-muted-foreground dark:border-sidebar-border"
+                    class="border-y border-border bg-muted/40 text-left text-xs text-muted-foreground"
                 >
                     <tr>
                         <th scope="col" class="px-5 py-2.5 font-medium">
@@ -73,9 +71,7 @@ const isNegative = (amount: string) => amount.startsWith('-');
                         </th>
                     </tr>
                 </thead>
-                <tbody
-                    class="divide-y divide-sidebar-border/70 dark:divide-sidebar-border"
-                >
+                <tbody class="divide-y divide-border">
                     <tr
                         v-for="user in users"
                         :key="user.id"

@@ -22,9 +22,7 @@ const share = (count: number) =>
 </script>
 
 <template>
-    <section
-        class="rounded-2xl border border-sidebar-border/70 bg-card p-5 shadow-xs dark:border-sidebar-border"
-    >
+    <section class="rounded-2xl border border-border bg-card p-5 shadow-xs">
         <h2 class="text-base font-semibold">Generations by status</h2>
         <p class="text-xs text-muted-foreground">
             {{ total }} created in this range (UTC), including failures.

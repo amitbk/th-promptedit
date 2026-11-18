@@ -48,7 +48,7 @@ const charged = computed(() => {
 
 <template>
     <article
-        class="flex flex-col overflow-hidden rounded-2xl border border-sidebar-border/70 bg-card shadow-xs transition-shadow hover:shadow-md dark:border-sidebar-border"
+        class="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/10"
     >
         <div class="relative">
             <GenerationImage :generation="generation" />
@@ -87,7 +87,7 @@ const charged = computed(() => {
             </div>
 
             <dl
-                class="mt-auto grid grid-cols-2 gap-2 rounded-xl bg-muted/50 p-3 text-xs"
+                class="mt-auto grid grid-cols-2 gap-2 rounded-xl bg-secondary/60 p-3 text-xs"
             >
                 <div>
                     <dt class="text-muted-foreground">Estimate</dt>

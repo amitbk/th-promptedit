@@ -68,9 +68,9 @@ it('is only available to admins', function () {
 });
 
 it('shares whether the user may view admin reports', function () {
-    $this->actingAs(User::factory()->create())->get(route('dashboard'))
+    $this->actingAs(User::factory()->create())->get(route('generations.index'))
         ->assertInertia(fn (Assert $page) => $page->where('auth.can.viewAdminReports', false));
-    $this->actingAs($this->admin)->get(route('dashboard'))
+    $this->actingAs($this->admin)->get(route('generations.index'))
         ->assertInertia(fn (Assert $page) => $page->where('auth.can.viewAdminReports', true));
 });
 
@@ -223,7 +223,7 @@ it('counts each generation once, however many webhook events it received', funct
 
 it('validates the date range and returns to the default report with the errors', function (array $query, string $field) {
     $this->actingAs($this->admin)
-        ->from(route('dashboard'))
+        ->from(route('generations.index'))
         ->get(route('admin.usage-report', $query))
         ->assertRedirect(route('admin.usage-report'))
         ->assertSessionHasErrors($field);

@@ -4,13 +4,15 @@ use App\Http\Controllers\Admin\UsageReportController;
 use App\Http\Controllers\GenerationController;
 use App\Http\Controllers\PixelforgeWebhookController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::get('/', fn () => auth()->check()
+    ? redirect()->route('generations.index')
+    : Inertia::render('Welcome'))->name('home');
 
 Route::post('webhooks/pixelforge', PixelforgeWebhookController::class)->name('webhooks.pixelforge');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::get('generations', [GenerationController::class, 'index'])->name('generations.index');
     Route::get('generations/create', [GenerationController::class, 'create'])->name('generations.create');
     Route::get('generations/estimate', [GenerationController::class, 'estimate'])->name('generations.estimate');

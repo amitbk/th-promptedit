@@ -19,7 +19,7 @@ defineEmits<{
 
 <template>
     <section
-        class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5"
+        class="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-5 shadow-lg shadow-primary/5"
         aria-live="polite"
         :aria-busy="loading"
     >
@@ -57,7 +57,7 @@ defineEmits<{
                 class="mt-1 transition-opacity"
                 :class="{ 'opacity-50': loading }"
             >
-                <p class="text-3xl font-semibold tracking-tight tabular-nums">
+                <p class="text-4xl font-semibold tracking-tight tabular-nums">
                     <span class="text-base font-normal text-muted-foreground">
                         up to
                     </span>

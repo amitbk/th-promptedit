@@ -98,9 +98,7 @@ function shortDate(date: string): string {
 </script>
 
 <template>
-    <section
-        class="rounded-2xl border border-sidebar-border/70 bg-card p-5 shadow-xs dark:border-sidebar-border"
-    >
+    <section class="rounded-2xl border border-border bg-card p-5 shadow-xs">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h2 class="text-base font-semibold">Daily revenue and cost</h2>
@@ -158,7 +156,7 @@ function shortDate(date: string): string {
 
         <p
             v-if="!hasMoney"
-            class="mt-6 rounded-xl border border-dashed border-sidebar-border/70 p-8 text-center text-sm text-muted-foreground dark:border-sidebar-border"
+            class="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground"
         >
             No billed generations in this range.
         </p>
